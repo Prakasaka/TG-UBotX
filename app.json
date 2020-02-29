@@ -9,9 +9,9 @@
     "modular",
     "productivity"
   ],
-  "repository": "https://github.com/HitaloKun/TG-UBotX",
+  "repository": "https://github.com/TG-UBotX/TG-UBotX",
   "website": "https://tg-ubotx.github.io/",
-  "success_url": "https://t.me/UBotX",
+  "success_url": "https://t.me/TGUBotX",
   "stack": "container",
   "env": {
     "API_KEY": {

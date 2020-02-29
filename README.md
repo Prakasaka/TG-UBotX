@@ -1,8 +1,8 @@
 # UBotX - Telegram UserBot
 
 [![Build](https://github.com/TG-UBotX/TG-UBotX/workflows/FailedChecker/badge.svg?branch=master)](https://github.com/TG-UBotX/TG-UBotX/actions "Build")
-[![@ubotx](https://img.shields.io/badge/%F0%9F%92%AC%20Telegram-%40UBotX-blue.svg)](https://telegram.me/TGUBotX)
-
+[![@TGUBotX](https://img.shields.io/badge/%F0%9F%92%AC%20Telegram-%40UBotX-blue.svg)](https://telegram.me/TGUBotX)
+[![Documentation Status][docsbadge]][https://tg-ubotx.github.io]
 
 ```
 #include <std/disclaimer.h>
