@@ -14,15 +14,14 @@ from userbot.events import register
 from userbot.utils.tgdoc import *
 
 
-@register(outgoing=True, pattern=r"^\.c(?:hat)?(\s+[\S\s]+|$)")
+@register(outgoing=True, pattern="^\.chat$")
 async def chat_info(e):
     params = e.pattern_match.group(1) or ""
-    args, chat = parse_arguments(
-        params, ['id', 'general', 'admins', 'bots', 'all'])
+    args, chat = parse_arguments(params, ['id', 'general', 'admins', 'bots', 'all'])
     args['chat'] = chat
 
     if isinstance(e.chat, User):
-        from .user_info import fetch_info as fetch_user_info
+        from .userinfo import fetch_info as fetch_user_info
         replied_user = await e.client(GetFullUserRequest(e.chat.id))
         response = await fetch_user_info(replied_user, **args)
     else:
@@ -36,7 +35,6 @@ async def chat_info(e):
 
 async def fetch_info(event, full_chat, **kwargs):
     chat = full_chat.chats[0]
-
     show_all = kwargs.get('all', False)
     id_only = kwargs.get('id', False)
     show_general = kwargs.get('general', True)
@@ -46,10 +44,10 @@ async def fetch_info(event, full_chat, **kwargs):
     is_private = False
     if isinstance(chat, Channel) and chat.username:
         name = chat.title if chat.title else chat.username
-        title = Link(name, f"https://t.me/{chat.username}")
+        title = Bold("Chat Informations")
     elif chat.title:
         is_private = True
-        title = Bold(chat.title)
+        title = Bold("Chat Informations")
     else:
         is_private = True
         title = Bold(f"Chat {chat.id}")
@@ -62,47 +60,37 @@ async def fetch_info(event, full_chat, **kwargs):
         return KeyValueItem(title, Code(str(chat.id)))
 
     admin_list = await list_admins(event)
+    
 
     if show_general:
         exported_invite = full_chat.full_chat.exported_invite
-        invite_link = exported_invite.link if isinstance(
-            exported_invite, ChatInviteExported) else None
+        invite_link = exported_invite.link if isinstance(exported_invite, ChatInviteExported) else None
         admin_count = full_chat.full_chat.admins_count or len(admin_list)
 
-        general = SubSection(Bold("general"),
-                             KeyValueItem("id",
-                                          Code(str(chat.id))),
-                             KeyValueItem("title",
-                                          Code(chat.title)),
-                             KeyValueItem("private",
-                                          Code(str(is_private))),
-                             KeyValueItem("invite link",
-                                          Link(invite_link.split('/')[-1],
-                                               invite_link)) if invite_link else None,
-                             SubSubSection("participants",
-                                           KeyValueItem("admins",
-                                                        Code(str(admin_count))),
-                                           KeyValueItem("online",
-                                                        Code(str(full_chat.full_chat.online_count))),
-                                           KeyValueItem("total",
-                                                        Code(str(full_chat.full_chat.participants_count)))))
+        general = SubSection(KeyValueItem("   \tChat Id", Code(str(f"-100{chat.id}"))),
+                             KeyValueItem("Title", f"[{chat.title}](t.me/{chat.username})"),
+                             KeyValueItem("Private", Code(str(is_private))),
+                             KeyValueItem("Invite Link", Link(invite_link.split('/')[-1], invite_link)) if invite_link else None,
+                             KeyValueItem("Admins", Code(str(admin_count))),
+                             KeyValueItem("Online", Code(str(full_chat.full_chat.online_count))),
+                             KeyValueItem("Total", Code(str(full_chat.full_chat.participants_count))))
     else:
         general = None
 
     if show_admins:
-        admins = SubSection(Bold("admins"))
+        admins = SubSection(Bold("Admins"))
         for admin in admin_list:
             admins.items.append(String(inline_mention(admin)))
         if not admins:
-            admins.items.append(String("No admins"))
+            admins.items.append(String("No Admins"))
 
     if show_bots:
         bots_list = await list_bots(event)
-        bots = SubSection(Bold("bots"))
+        bots = SubSection(Bold("Bots"))
         for bot in bots_list:
             bots.items.append(String(inline_mention(bot)))
         if not bots:
-            bots.items.append(String("No bots"))
+            bots.items.append(String("No Bots"))
 
     return TGDoc(Section(title,
                          general if show_general else None,
@@ -115,10 +103,10 @@ add_help_item(
     "Admin",
     "Returns stats for the current chat",
     """
-    \n.chat [options]\
-    \n\n.id: Return only the id.\
-    \n.general: Show general information related to the chat.\
-    \n.admins: Show chat admins (does not mention them).\
-    \n.all: Show everything.
+    \nchat [options]\
+    \n\nid: Return only the id.\
+    \ngeneral: Show general information related to the chat.\
+    \nadmins: Show chat admins (does not mention them).\
+    \nall: Show everything.
     """
 )
