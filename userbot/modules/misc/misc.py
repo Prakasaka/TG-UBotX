@@ -12,20 +12,20 @@ from asyncio import sleep
 from os import execl
 
 from ..help import add_help_item
-from userbot import BOTLOG, BOTLOG_CHATID, bot
+from userbot import BOTLOG, BOTLOG_CHATID, MAX_MESSAGE_SIZE_LIMIT, bot
 from userbot.events import register
 
 
 @register(outgoing=True, pattern="^.creator$")
 async def creator(e):
-    await e.edit("Here's my God: [Hitalo](https://t.me/HitaloSama)")
+    await e.edit(r"Here is TG-UBotX's Creator : [Hitalo](https://t.me/HitaloSama)")
 
 
 @register(outgoing=True, pattern="^\.repo$")
 async def repo_is_here(wannasee):
     """ For .repo command, just returns the repo URL. """
     await wannasee.edit(
-        f"Click [here](https://github.com/TG-UBotX/TG-UBotX) to open my userbot's repository.")
+        "Click [Here](https://github.com/HitaloKun/TG-UBotX) To Open TG-UBotX's Repository.")
 
 
 @register(outgoing=True, pattern="^.uwiki$")
@@ -119,17 +119,19 @@ async def raw(event):
     else:
         the_real_message = event.stringify()
         reply_to_id = event.message.id
-    with io.BytesIO(str.encode(the_real_message)) as out_file:
-        out_file.name = "raw_message_data.txt"
-        await event.edit(
-            "`Check the userbot log for the decoded message data !!`")
-        await event.client.send_file(
-            BOTLOG_CHATID,
-            out_file,
-            force_document=True,
-            allow_cache=False,
-            reply_to=reply_to_id,
-            caption="`Here's the decoded message data !!`")
+    if len(the_real_message) > MAX_MESSAGE_SIZE_LIMIT:
+        with io.BytesIO(str.encode(the_real_message)) as out_file:
+            out_file.name = "json.text"
+            await event.client.send_file(
+                event.chat_id,
+                out_file,
+                force_document=True,
+                allow_cache=False,
+                reply_to=reply_to_id
+            )
+            await event.delete()
+    else:
+        await event.edit(f"`{the_real_message}`")
 
 
 add_help_item(
