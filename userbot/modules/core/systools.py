@@ -113,7 +113,6 @@ async def amireallyalive(alive):
               f"**User:** `{DEFAULTUSER}` \n"
               f"[I DEMAND RIGHTS FOR US BOTS, WE ARE EQUAL TO YOU HOOMANS](https://telegra.ph/file/a40c982e973fe07ed528a.mp4)")
     await alive.edit(hooman,link_preview=True)
-    )
 
 
 @register(outgoing=True, pattern=r"^\.aliveu")
