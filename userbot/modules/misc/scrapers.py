@@ -25,6 +25,8 @@ from requests import get
 from search_engine_parser import GoogleSearch
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from mtranslate import translate
+from langdetect import detect
 from emoji import get_emoji_regexp
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import (DownloadError, ContentTooShortError,
