@@ -11,6 +11,7 @@ import sys
 from asyncio import create_subprocess_shell as asyncsubshell
 from asyncio import subprocess as asyncsub
 from os import remove
+import time
 from time import gmtime, strftime
 from traceback import format_exc
 
@@ -119,10 +120,10 @@ def register(**args):
                     file.close()
 
                     if LOGSPAMMER:
-                        await check.respond("`Sorry, my userbot has crashed.\
-                        \nThe error logs are stored in the userbot's log chat.`"
-                                            )
-
+                        await check.edit("**Craaaaaaaaaaaaaaaaaaaaaashed\nThe error logs are in BotLog Group.**")
+                        time.sleep(5)
+                        await check.delete()
+                      
                     await check.client.send_file(send_to,
                                                  "ubotx_error.log",
                                                  caption=text)
