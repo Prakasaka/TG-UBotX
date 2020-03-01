@@ -34,7 +34,6 @@ from youtube_dl.utils import (DownloadError, ContentTooShortError,
                               MaxDownloadsReached, PostProcessingError,
                               UnavailableVideoError, XAttrMetadataError)
 from youtube_search import YoutubeSearch
-from pytube import YouTube as YT, exceptions
 from telethon.tl.types import DocumentAttributeAudio
 from ..help import add_help_item
 from asyncio import sleep
