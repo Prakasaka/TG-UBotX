@@ -14,7 +14,6 @@ from asyncio import sleep
 from datetime import datetime
 from telegraph import Telegraph, upload_file, exceptions
 from userbot import (TELEGRAPH_SHORT_NAME, TEMP_DOWNLOAD_DIRECTORY, BOTLOG_CHATID, bot)
-from ..help import add_help_item
 from userbot.events import register
 
 telegraph = Telegraph()
@@ -88,13 +87,3 @@ async def telegraphs(graph):
 def resize_image(image):
     im = Image.open(image)
     im.save(image, "PNG")
-
-
-add_help_item(
-    "scrapers",
-    "Misc",
-    "upload media & text to telegraph site.",
-    """
-    `.telegraph media` or `.telegraph text` <with reply any image, gif & text>.
-    """
-)
