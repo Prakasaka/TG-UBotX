@@ -16,20 +16,14 @@ from bs4 import BeautifulSoup
 from time import sleep
 from html import unescape
 from re import findall
-from selenium import webdriver
 from urllib.parse import quote_plus
 from urllib.error import HTTPError
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.chrome.options import Options
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 from requests import get
 from search_engine_parser import GoogleSearch
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from googletrans import LANGUAGES, Translator
-from gtts import gTTS
-from gtts.lang import tts_langs
 from emoji import get_emoji_regexp
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import (DownloadError, ContentTooShortError,
@@ -40,87 +34,10 @@ from youtube_dl.utils import (DownloadError, ContentTooShortError,
 from telethon.tl.types import DocumentAttributeAudio
 from ..help import add_help_item
 from asyncio import sleep
-from userbot import BOTLOG, BOTLOG_CHATID, YOUTUBE_API_KEY, CHROME_DRIVER, GOOGLE_CHROME_BIN
+from userbot import BOTLOG, BOTLOG_CHATID
 from userbot.events import register
 from userbot.modules.misc.upload_download import progress, humanbytes, time_formatter
 from userbot.utils.google_images_download import googleimagesdownload
-
-CARBONLANG = "auto"
-TTS_LANG = "en"
-TRT_LANG = "en"
-
-
-@register(outgoing=True, pattern=r"^\.crblang (.*)")
-async def setlang(prog):
-    global CARBONLANG
-    CARBONLANG = prog.pattern_match.group(1)
-    await prog.edit(f"Language for carbon.now.sh set to {CARBONLANG}")
-
-
-@register(outgoing=True, pattern=r"^\.carbon")
-async def carbon_api(e):
-    """ A Wrapper for carbon.now.sh """
-    await e.edit("`Processing..`")
-    CARBON = 'https://carbon.now.sh/?l={lang}&code={code}'
-    global CARBONLANG
-    textx = await e.get_reply_message()
-    pcode = e.text
-    if pcode[8:]:
-        pcode = str(pcode[8:])
-    elif textx:
-        pcode = str(textx.message)  # Importing message to module
-    code = quote_plus(pcode)  # Converting to urlencoded
-    await e.edit("`Processing..\n25%`")
-    if os.path.isfile("./carbon.png"):
-        os.remove("./carbon.png")
-    url = CARBON.format(code=code, lang=CARBONLANG)
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.binary_location = GOOGLE_CHROME_BIN
-    chrome_options.add_argument("--window-size=1920x1080")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-gpu")
-    prefs = {'download.default_directory': './'}
-    chrome_options.add_experimental_option('prefs', prefs)
-    driver = webdriver.Chrome(executable_path=CHROME_DRIVER,
-                              options=chrome_options)
-    driver.get(url)
-    await e.edit("`Processing..\n50%`")
-    download_path = './'
-    driver.command_executor._commands["send_command"] = (
-        "POST", '/session/$sessionId/chromium/send_command')
-    params = {
-        'cmd': 'Page.setDownloadBehavior',
-        'params': {
-            'behavior': 'allow',
-            'downloadPath': download_path
-        }
-    }
-    command_result = driver.execute("send_command", params)
-    driver.find_element_by_xpath("//button[contains(text(),'Export')]").click()
-    driver.find_element_by_xpath("//button[contains(text(),'4x')]").click()
-    driver.find_element_by_xpath("//button[contains(text(),'PNG')]").click()
-    await e.edit("`Processing..\n75%`")
-    # Waiting for downloading
-    while not os.path.isfile("./carbon.png"):
-        await sleep(0.5)
-    await e.edit("`Processing..\n100%`")
-    file = './carbon.png'
-    await e.edit("`Uploading..`")
-    await e.client.send_file(
-        e.chat_id,
-        file,
-        caption="Made using [Carbon](https://carbon.now.sh/about/),\
-        \na project by [Dawn Labs](https://dawnlabs.io/)",
-        force_document=True,
-        reply_to=e.message.reply_to_msg_id,
-    )
-
-    os.remove('./carbon.png')
-    driver.quit()
-    # Removing carbon.png after uploading
-    await e.delete()  # Deleting msg
 
 
 @register(outgoing=True, pattern=r"^\.img (.*)")
@@ -152,34 +69,6 @@ async def img_sampler(event):
         await event.client.get_input_entity(event.chat_id), lst)
     shutil.rmtree(os.path.dirname(os.path.abspath(lst[0])))
     await event.delete()
-
-
-@register(outgoing=True, pattern=r"^\.currency (.*)")
-async def moni(event):
-    input_str = event.pattern_match.group(1)
-    input_sgra = input_str.split(" ")
-    if len(input_sgra) == 3:
-        try:
-            number = float(input_sgra[0])
-            currency_from = input_sgra[1].upper()
-            currency_to = input_sgra[2].upper()
-            request_url = "https://api.exchangeratesapi.io/latest?base={}".format(
-                currency_from)
-            current_response = get(request_url).json()
-            if currency_to in current_response["rates"]:
-                current_rate = float(current_response["rates"][currency_to])
-                rebmun = round(number * current_rate, 2)
-                await event.edit("{} {} = {} {}".format(
-                    number, currency_from, rebmun, currency_to))
-            else:
-                await event.edit(
-                    "`This seems to be some alien currency, which I can't convert right now.`"
-                )
-        except Exception as e:
-            await event.edit(str(e))
-    else:
-        await event.edit("`Invalid syntax.`")
-        return
 
 
 @register(outgoing=True, pattern=r"^\.google (.*)")
@@ -289,51 +178,6 @@ async def urban_dict(ud_e):
         await ud_e.edit("No result found for **" + query + "**")
 
 
-@register(outgoing=True, pattern=r"^\.tts(?: |$)([\s\S]*)")
-async def text_to_speech(query):
-    """ For .tts command, a wrapper for Google Text-to-Speech. """
-    textx = await query.get_reply_message()
-    message = query.pattern_match.group(1)
-    if message:
-        pass
-    elif textx:
-        message = textx.text
-    else:
-        await query.edit(
-            "`Give a text or reply to a message for Text-to-Speech!`")
-        return
-
-    try:
-        gTTS(message, TTS_LANG)
-    except AssertionError:
-        await query.edit(
-            'The text is empty.\n'
-            'Nothing left to speak after pre-precessing, tokenizing and cleaning.'
-        )
-        return
-    except ValueError:
-        await query.edit('Language is not supported.')
-        return
-    except RuntimeError:
-        await query.edit('Error loading the languages dictionary.')
-        return
-    tts = gTTS(message, TTS_LANG)
-    tts.save("k.mp3")
-    with open("k.mp3", "rb") as audio:
-        linelist = list(audio)
-        linecount = len(linelist)
-    if linecount == 1:
-        tts = gTTS(message, TTS_LANG)
-        tts.save("k.mp3")
-    with open("k.mp3", "r"):
-        await query.client.send_file(query.chat_id, "k.mp3", voice_note=True)
-        os.remove("k.mp3")
-        if BOTLOG:
-            await query.client.send_message(
-                BOTLOG_CHATID, "#TTS\nText to Speech executed successfully !")
-        await query.delete()
-
-
 # kanged from Blank-x ;---;
 @register(outgoing=True, pattern=r"^\.imdb (.*)")
 async def imdb(e):
@@ -416,73 +260,6 @@ async def imdb(e):
                      parse_mode='HTML')
     except IndexError:
         await e.edit("Plox enter **Valid movie name** kthx")
-
-
-@register(outgoing=True, pattern=r"^\.trt(?: |$)([\s\S]*)")
-async def translateme(trans):
-    """ For .trt command, translate the given text using Google Translate. """
-    translator = Translator()
-    textx = await trans.get_reply_message()
-    message = trans.pattern_match.group(1)
-    if message:
-        pass
-    elif textx:
-        message = textx.text
-    else:
-        await trans.edit("`Give a text or reply to a message to translate!`")
-        return
-
-    try:
-        reply_text = translator.translate(deEmojify(message), dest=TRT_LANG)
-    except ValueError:
-        await trans.edit("Invalid destination language.")
-        return
-
-    source_lan = LANGUAGES[f'{reply_text.src.lower()}']
-    transl_lan = LANGUAGES[f'{reply_text.dest.lower()}']
-    reply_text = f"From **{source_lan.title()}**\nTo **{transl_lan.title()}:**\n\n{reply_text.text}"
-
-    await trans.edit(reply_text)
-    if BOTLOG:
-        await trans.client.send_message(
-            BOTLOG_CHATID,
-            f"#TRT\nTranslated some {source_lan.title()} stuff to {transl_lan.title()} just now.",
-        )
-
-
-@register(pattern=r"^\.lang (trt|tts) (.*)", outgoing=True)
-async def lang(value):
-    """ For .lang command, change the default langauge of userbot scrapers. """
-    util = value.pattern_match.group(1).lower()
-    if util == "trt":
-        scraper = "Translator"
-        global TRT_LANG
-        arg = value.pattern_match.group(2).lower()
-        if arg in LANGUAGES:
-            TRT_LANG = arg
-            LANG = LANGUAGES[arg]
-        else:
-            await value.edit(
-                f"`Invalid Language code !!`\n`Available language codes for TRT`:\n\n`{LANGUAGES}`"
-            )
-            return
-    elif util == "tts":
-        scraper = "Text to Speech"
-        global TTS_LANG
-        arg = value.pattern_match.group(2).lower()
-        if arg in tts_langs():
-            TTS_LANG = arg
-            LANG = tts_langs()[arg]
-        else:
-            await value.edit(
-                f"`Invalid Language code !!`\n`Available language codes for TTS`:\n\n`{tts_langs()}`"
-            )
-            return
-    await value.edit(f"`Language for {scraper} changed to {LANG.title()}.`")
-    if BOTLOG:
-        await value.client.send_message(
-            BOTLOG_CHATID,
-            f"`Language for {scraper} changed to {LANG.title()}.`")
 
 
 @register(outgoing=True, pattern=r"^\.yt (.*)")
@@ -704,14 +481,6 @@ add_help_item(
     `.yt` <text>
     **Usage:** Does a YouTube search.
 
-    .trt <text> [or reply]
-    **Usage:** Translates text to the language which is set.
-    Use `.lang trt <language code>` to set language for trt. (Default is English)
-
-    `.tts` <text> [or reply]
-    **Usage:** Translates text to speech for the language which is set.
-    Use `.lang tts <language code>` to set language for tts. (Default is English.)
-
     `.ud` <query>
     **Usage:** Does a search on Urban Dictionary.
 
@@ -720,13 +489,6 @@ add_help_item(
 
     `.wiki` <query>
     **Usage:** Does a search on Wikipedia.
-
-    `.carbon` <text> [or reply]
-    **Usage:** Beautify your code using carbon.now.sh
-    Use .crblang <text> to set language for your code.
-
-    `.currency` <amount> <from> <to>
-    **Usage:** Converts various currencies for you.
 
     `.img` <search_query>
     **Usage:** Does an image search on Google and shows two images.
