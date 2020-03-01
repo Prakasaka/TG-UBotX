@@ -8,6 +8,7 @@
 import os
 import re
 import time
+import json
 import asyncio
 import shutil
 import asyncurban
@@ -30,7 +31,8 @@ from youtube_dl.utils import (DownloadError, ContentTooShortError,
                               ExtractorError, GeoRestrictedError,
                               MaxDownloadsReached, PostProcessingError,
                               UnavailableVideoError, XAttrMetadataError)
-
+from youtube_search import YoutubeSearch
+from pytube import YouTube as YT, exceptions
 from telethon.tl.types import DocumentAttributeAudio
 from ..help import add_help_item
 from asyncio import sleep
@@ -260,70 +262,50 @@ async def imdb(e):
                      parse_mode='HTML')
     except IndexError:
         await e.edit("Plox enter **Valid movie name** kthx")
-
-
+        
+        
+@register(outgoing=True, pattern="^\.trt (.*)")
+async def trans_late(gootrans):
+    """Translates desired text to whatever language."""
+    message = gootrans.pattern_match.group(1)
+    if not message:
+        await gootrans.edit("`Specify the target language.`")
+        return
+    if message and len(message) < 2 and not gootrans.is_reply:
+        await gootrans.edit("`Specify the text to be translated.`")
+        return
+    reply = await gootrans.get_reply_message()
+    text = (
+        message[1] if not gootrans.is_reply else
+        reply.text)
+    message = message[0]
+    if reply and not reply.text:
+        await gootrans.edit("`Babe..Are you okay? You can not translate files you know.`")
+        return
+    await gootrans.edit("`Translating...`")
+    result = translate(text, message, 'auto')
+    await gootrans.edit(
+                       "**Text:** `{}`\n"
+                       "**Detected Language:** `{}`\n\n"
+                       "**Translated to:**\n`{}`"
+                       .format(text, detect(text), result))
+    
+    
+#Credit https://github.com/erenmetesar/NiceGrill/blob/master/nicegrill/modules/youtube.py
 @register(outgoing=True, pattern=r"^\.yt (.*)")
 async def yt_search(video_q):
     """ For .yt command, do a YouTube search from Telegram. """
     query = video_q.pattern_match.group(1)
-    result = ''
-
-    if not YOUTUBE_API_KEY:
-        await video_q.edit(
-            "`Error: YouTube API key missing! Add it to environment vars or config.env.`"
-        )
+    if not query:
+        await video_q.edit("`Enter a search argument first`")
         return
-
-    await video_q.edit("```Processing...```")
-
-    full_response = await youtube_search(query)
-    videos_json = full_response[1]
-
-    for video in videos_json:
-        title = f"{unescape(video['snippet']['title'])}"
-        link = f"https://youtu.be/{video['id']['videoId']}"
-        result += f"{title}\n{link}\n\n"
-
-    reply_text = f"**Search Query:**\n`{query}`\n\n**Results:**\n\n{result}"
-
-    await video_q.edit(reply_text)
-
-
-async def youtube_search(query,
-                         order="relevance",
-                         token=None,
-                         location=None,
-                         location_radius=None):
-    """ Do a YouTube search. """
-    youtube = build('youtube',
-                    'v3',
-                    developerKey=YOUTUBE_API_KEY,
-                    cache_discovery=False)
-    search_response = youtube.search().list(
-        q=query,
-        type="video",
-        pageToken=token,
-        order=order,
-        part="id,snippet",
-        maxResults=10,
-        location=location,
-        locationRadius=location_radius).execute()
-
-    videos = []
-
-    for search_result in search_response.get("items", []):
-        if search_result["id"]["kind"] == "youtube#video":
-            videos.append(search_result)
-    try:
-        nexttok = search_response["nextPageToken"]
-        return (nexttok, videos)
-    except HttpError:
-        nexttok = "last_page"
-        return (nexttok, videos)
-    except KeyError:
-        nexttok = "KeyError, try again."
-        return (nexttok, videos)
-
+    await video_q.edit("`Searching..`")
+    results = json.loads(YoutubeSearch(query, max_results=10).to_json())
+    text = ""
+    for i in results["videos"]:
+        text += f"**◍ {i['title']}**\nhttps://www.youtube.com{i['link']}\n\n"
+    await video_q.edit(text)
+    
 
 @register(outgoing=True, pattern=r"^\.rip(audio|video) (.*)")
 async def download_video(v_url):
@@ -460,11 +442,6 @@ async def download_video(v_url):
                          f"{rip_data['title']}.mp4")))
         os.remove(f"{rip_data['id']}.mp4")
         await v_url.delete()
-
-
-def deEmojify(inputString):
-    """ Remove emojis and other non-safe characters from string """
-    return get_emoji_regexp().sub(u'', inputString)
 
 
 add_help_item(
