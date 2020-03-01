@@ -91,10 +91,10 @@ def resize_image(image):
 
 
 add_help_item(
-    "picture",
+    "scrapers",
     "Misc",
     "upload media & text to telegraph site.",
     """
-    `.telegraph (media|text) <with reply any document, image, gif & text>`
+    `.telegraph media` or `.telegraph text` <with reply any image, gif & text>.
     """
 )
