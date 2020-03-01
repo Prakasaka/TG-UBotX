@@ -40,3 +40,4 @@ wikipedia>=1.4.0
 telegraph
 youtube-search
 mtranslate
+langdetect
