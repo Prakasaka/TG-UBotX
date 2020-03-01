@@ -15,11 +15,9 @@ RUN apk add --no-cache --update \
     bzip2-dev \
     curl \
     coreutils \
-    figlet \
     gcc \
     g++ \
     git \
-    aria2 \
     util-linux \
     libevent \
     libjpeg-turbo-dev \
@@ -33,7 +31,6 @@ RUN apk add --no-cache --update \
     libxslt-dev \
     linux-headers \
     musl-dev \
-    neofetch \
     openssl-dev \
     postgresql \
     postgresql-client \
@@ -48,26 +45,16 @@ RUN apk add --no-cache --update \
     python3-dev \
     readline-dev \
     ffmpeg \
-    figlet \
     sqlite-dev \
     sudo \
-    chromium \
-    chromium-chromedriver \
     zlib-dev \
     zip
-
-
-RUN python3 -m ensurepip \
-    && pip3 install --upgrade pip setuptools \
-    && rm -r /usr/lib/python*/ensurepip && \
-    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-    rm -r /root/.cache
+    
 
 #
 # Clone repo and prepare working directory
 #
-RUN git clone 'https://github.com/TG-UBotX/TG-UBotX.git' /root/userbot
+RUN git clone 'https://github.com/Prakasaka/TG-UBotX.git' /root/userbot
 RUN mkdir /root/userbot/bin/
 WORKDIR /root/userbot/
 
