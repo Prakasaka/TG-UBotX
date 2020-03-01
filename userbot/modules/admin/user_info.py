@@ -15,7 +15,7 @@ from userbot.utils import parse_arguments, get_user_from_event
 from userbot.utils.tgdoc import *
 
 
-@register(pattern=r"^\.u(?:ser)?(\s+[\S\s]+|$)", outgoing=True)
+@register(outgoing=True, pattern="user$")
 async def who(event: NewMessage.Event):
     """ For .user command, get info about a user. """
     if event.fwd_from:
@@ -63,35 +63,24 @@ async def fetch_info(replied_user, **kwargs):
     full_name = str(user.first_name + ' ' + (user.last_name or ''))
 
     if mention_name:
-        title = Link(full_name, f'tg://user?id={user.id}')
+        title = Bold("User Information")
     else:
-        title = Bold(full_name)
+        title = Bold("User Information")
 
     if id_only:
         return KeyValueItem(title, Code(user.id))
 
-    general = SubSection(
-        Bold('general'), KeyValueItem(
-            'id', Code(
-                user.id)), KeyValueItem(
-            'first_name', Code(
-                user.first_name)), KeyValueItem(
-            'last_name', Code(
-                user.last_name)), KeyValueItem(
-            'username', Code(
-                user.username)), KeyValueItem(
-            'mutual_contact', Code(
-                user.mutual_contact)), KeyValueItem(
-            'common groups', Code(
-                replied_user.common_chats_count)))
+    general = SubSection(KeyValueItem('   \tID', Code(user.id)),
+                         KeyValueItem('First Name', Code(user.first_name)),
+                         KeyValueItem('Last Name', Code(user.last_name)),
+                         KeyValueItem('Username', f"[{user.username}](@{user.username})"),
+                         KeyValueItem('Mutual Contact', Code(user.mutual_contact)),
+                         KeyValueItem('Common Groups', Code(replied_user.common_chats_count)))
 
     if spamwatch:
         banobj = spamwatch.get_ban(user.id)
         if banobj:
-            general.items.append(
-                KeyValueItem(
-                    'gbanned',
-                    f'True / {banobj.reason}'))
+            general.items.append(KeyValueItem('gbanned', f'True / {banobj.reason}'))
         else:
             general.items.append(KeyValueItem('gbanned', 'False'))
 
@@ -104,20 +93,13 @@ async def fetch_info(replied_user, **kwargs):
                                   Code(user.bot_inline_placeholder)),
                      KeyValueItem('bot_nochats', Code(user.bot_nochats)))
 
-    misc = SubSection(
-        Bold('misc'), KeyValueItem(
-            'restricted', Code(
-                user.restricted)), KeyValueItem(
-            'restriction_reason', Code(
-                user.restriction_reason)), KeyValueItem(
-            'deleted', Code(
-                user.deleted)), KeyValueItem(
-            'verified', Code(
-                user.verified)), KeyValueItem(
-            'min', Code(
-                user.min)), KeyValueItem(
-            'lang_code', Code(
-                user.lang_code)))
+    misc = SubSection(Bold('misc'),
+                      KeyValueItem('restricted', Code(user.restricted)),
+                      KeyValueItem('restriction_reason', Code(user.restriction_reason)),
+                      KeyValueItem('deleted', Code(user.deleted)),
+                      KeyValueItem('verified', Code(user.verified)),
+                      KeyValueItem('min', Code(user.min)),
+                      KeyValueItem('lang_code', Code(user.lang_code)))
 
     return Section(title,
                    general if show_general else None,
@@ -130,18 +112,18 @@ add_help_item(
     "Admin",
     "List information about a particular user.",
     """
-    `.u(ser) [options] (username|id)`
-
+    `u(ser) [options] (username|id)`
+    
     Or, in response to a message
-    `.u(ser) [options]`
-
+    `u(ser) [options]`
+    
     Options:
-    `.id`: Show only the user's ID
-    `.general`: Show general user info
-    `.bot`: Show bot related info
-    `.misc`: Show miscelanious info
-    `.all`: Show all info (overrides other options)
-    `.mention`: Inline mention the user
-    `.forward`: Follow forwarded message
+    `id`: Show only the user's ID
+    `general`: Show general user info
+    `bot`: Show bot related info
+    `misc`: Show miscelanious info
+    `all`: Show all info (overrides other options)
+    `mention`: Inline mention the user
+    `forward`: Follow forwarded message
     """
 )
