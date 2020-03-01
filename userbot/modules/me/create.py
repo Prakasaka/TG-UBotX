@@ -45,8 +45,8 @@ async def telegraphs(grop):
             await grop.edit(f"**Channel Created Successfully.\nJoin Channel : ** [{group_name}]({result.link})")
         except Exception as e:  # pylint:disable=C0103,W0703
             await grop.edit(str(e))
-        else:
-            await grop.edit("**Wrong Character. Type g for SuperGroup or c for Channel**")
+    else:
+        await grop.edit("**Wrong Character. Type g for SuperGroup or c for Channel**")
 
 add_help_item(
     "create",
