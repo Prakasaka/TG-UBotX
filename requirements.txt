@@ -1,6 +1,5 @@
 git+https://github.com/YouTwitFace/photohash.git
 aiohttp
-aria2p>=0.7.1
 async_generator>=1.10
 asyncurban>=0.3.3
 beautifulsoup4>=4.8.2
