@@ -53,8 +53,8 @@ async def gdrive_upload_function(dryb):
     if not os.path.isdir(TEMP_DOWNLOAD_DIRECTORY):
         os.makedirs(TEMP_DOWNLOAD_DIRECTORY)
         required_file_name = None
-    if "|" in input_str:
-        url, file_name = input_str.split("|")
+    if "," in input_str:
+        url, file_name = input_str.split(",")
         url = url.strip()
         # https://stackoverflow.com/a/761825/4723940
         file_name = file_name.strip()
@@ -78,9 +78,8 @@ async def gdrive_upload_function(dryb):
             speed = downloader.get_speed()
             elapsed_time = round(diff) * 1000
             progress_str = "[{0}{1}] {2}%".format(
-                ''.join(["▰" for i in range(math.floor(percentage / 10))]),
-                ''.join(["▱"
-                         for i in range(10 - math.floor(percentage / 10))]),
+                ''.join(["●" for i in range(math.floor(percentage / 5))]),
+                ''.join(["○" for i in range(20 - math.floor(percentage / 5))]),
                 round(percentage, 2))
             estimated_total_time = downloader.get_eta(human=True)
             try:
@@ -91,27 +90,25 @@ async def gdrive_upload_function(dryb):
                 \n{humanbytes(downloaded)} of {humanbytes(total_length)}\
                 \nETA: {estimated_total_time}"
 
-                if round(diff %
-                         10.00) == 0 and current_message != display_message:
+                if current_message != display_message:
                     await dryb.edit(current_message)
                     display_message = current_message
+                    await asyncio.sleep(1)
             except Exception as e:
                 LOGS.info(str(e))
                 pass
         if downloader.isSuccessful():
             await dryb.edit(
-                "Downloaded to `{}` successfully!\nInitiating Upload to Google Drive..."
-                .format(downloaded_file_name))
+                f"Downloaded to `{downloaded_file_name}` Successfully !!\nInitiating Upload to Google Drive..")
             required_file_name = downloaded_file_name
         else:
-            await dryb.edit("Incorrect URL\n{}".format(url))
+            await dryb.edit(f"Incorrect URL\n{url}")
     elif input_str:
         input_str = input_str.strip()
         if os.path.exists(input_str):
             required_file_name = input_str
             await dryb.edit(
-                "Found `{}` in local server, Initiating Upload to Google Drive..."
-                .format(input_str))
+                f"Found `{input_str}` in local server, Initiating Upload to Google Drive...")
         else:
             await dryb.edit(
                 "File not found in local server. Give me a valid file path !")
@@ -129,8 +126,7 @@ async def gdrive_upload_function(dryb):
         else:
             required_file_name = downloaded_file_name
             await dryb.edit(
-                "Downloaded to `{}` Successfully!\nInitiating Upload to Google Drive..."
-                .format(downloaded_file_name))
+                f"Downloaded to `{downloaded_file_name}` Successfully!\nInitiating Upload to Google Drive...")
     if required_file_name:
         if G_DRIVE_AUTH_TOKEN_DATA is not None:
             with open(G_DRIVE_TOKEN_FILE, "w") as t_file:
@@ -169,8 +165,7 @@ async def upload_dir_to_gdrive(event):
         if G_DRIVE_AUTH_TOKEN_DATA is not None:
             with open(G_DRIVE_TOKEN_FILE, "w") as t_file:
                 t_file.write(G_DRIVE_AUTH_TOKEN_DATA)
-        # Check if token file exists, if not create it by requesting
-        # authorization code
+        # Check if token file exists, if not create it by requesting authorization code
         storage = None
         if not os.path.isfile(G_DRIVE_TOKEN_FILE):
             storage = await create_token_file(G_DRIVE_TOKEN_FILE, event)
@@ -196,44 +191,15 @@ async def gdrive_search_list(event):
     if G_DRIVE_AUTH_TOKEN_DATA is not None:
         with open(G_DRIVE_TOKEN_FILE, "w") as t_file:
             t_file.write(G_DRIVE_AUTH_TOKEN_DATA)
-    # Check if token file exists, if not create it by requesting authorization
-    # code
+    # Check if token file exists, if not create it by requesting authorization code
     storage = None
     if not os.path.isfile(G_DRIVE_TOKEN_FILE):
         storage = await create_token_file(G_DRIVE_TOKEN_FILE, event)
     http = authorize(G_DRIVE_TOKEN_FILE, storage)
-    # Authorize, get file parameters, upload file and print out result URL for
-    # download
+    # Authorize, get file parameters, upload file and print out result URL for download
     await event.edit(f"Searching for {input_str} in your Google Drive ...")
     gsearch_results = await gdrive_search(http, input_str)
     await event.edit(gsearch_results, link_preview=False)
-
-
-@register(
-    pattern=r"^\.gsetf https?://drive\.google\.com/drive/u/\d/folders/([-\w]{25,})",
-    outgoing=True)
-async def download(set):
-    """For .gsetf command, allows you to set path"""
-    await set.edit("Processing ...")
-    input_str = set.pattern_match.group(1)
-    if input_str:
-        parent_id = input_str
-        await set.edit(
-            "Custom Folder ID set successfully. The next uploads will upload to {parent_id} till `.gdriveclear`"
-        )
-        await set.delete()
-    else:
-        await set.edit(
-            "Use `.gdrivesp <link to GDrive Folder>` to set the folder to upload new files to."
-        )
-
-
-@register(pattern=r"^\.gsetclear$", outgoing=True)
-async def download(gclr):
-    """For .gsetclear command, allows you clear ur curnt custom path"""
-    await gclr.reply("Processing ...")
-    parent_id = GDRIVE_FOLDER_ID
-    await gclr.edit("Custom Folder ID cleared successfully!")
 
 
 @register(pattern=r"^\.gfolder$", outgoing=True)
@@ -303,8 +269,7 @@ async def upload_file(http, file_path, file_name, mime_type, event, parent_id):
     if parent_id:
         body["parents"] = [{"id": parent_id}]
     # Permissions body description: anyone who has link can upload
-    # Other permissions can be found at
-    # https://developers.google.com/drive/v2/reference/permissions
+    # Other permissions can be found at https://developers.google.com/drive/v2/reference/permissions
     permissions = {
         "role": "reader",
         "type": "anyone",
@@ -321,9 +286,8 @@ async def upload_file(http, file_path, file_name, mime_type, event, parent_id):
         if status:
             percentage = int(status.progress() * 100)
             progress_str = "[{0}{1}] {2}%".format(
-                "".join(["▰" for i in range(math.floor(percentage / 10))]),
-                "".join(["▱"
-                         for i in range(10 - math.floor(percentage / 10))]),
+                "".join(["●" for i in range(math.floor(percentage / 10))]),
+                "".join(["○" for i in range(10 - math.floor(percentage / 10))]),
                 round(percentage, 2))
             current_message = f"Uploading to Google Drive\nFile Name: {file_name}\n{progress_str}"
             if display_message != current_message:
@@ -434,16 +398,16 @@ async def gdrive_search(http, search_query):
                 file_title = file.get("title")
                 file_id = file.get("id")
                 if file.get("mimeType") == G_DRIVE_DIR_MIME_TYPE:
-                    res += f"`[FOLDER] {file_title}`\nhttps://drive.google.com/drive/folders/{file_id}\n\n"
+                    res += f"[FOLDER] [{file_title}](https://drive.google.com/drive/folders/{file_id})\n\n"
                 else:
-                    res += f"`{file_title}`\nhttps://drive.google.com/uc?id={file_id}&export=download\n\n"
+                    res += f"[{file_title}](https://drive.google.com/uc?id={file_id}&export=download)\n\n"
             page_token = response.get("nextPageToken", None)
             if page_token is None:
                 break
         except Exception as e:
             res += str(e)
             break
-    msg = f"**Google Drive Query**:\n`{search_query}`\n\n**Results**\n\n{res}"
+    msg = f"**Google Drive Query**:\n`{search_query}`\n\n**Results**\n{res}"
     return msg
 
 
@@ -454,12 +418,6 @@ add_help_item(
     """
     `.gdrive` <file_path / reply / URL|file_name>
     **Usage:** Uploads the file in reply, URL or file path in server to your Google Drive.
-
-    `.gsetf` <GDrive Folder URL>
-    **Usage:** Sets the folder to upload new files to.
-
-    `.gsetclear`
-    **Usage:** Reverts to default upload destination.
 
     `.gfolder`
     **Usage:** Shows your current upload destination/folder.
