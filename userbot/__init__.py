@@ -115,14 +115,14 @@ WEATHER_DEFCITY = os.environ.get("WEATHER_DEFCITY", None)
 FACE_API_KEY = os.environ.get("FACE_API_KEY", None)
 FACE_API_URL = os.environ.get("FACE_API_URL", None)
 
-# Youtube API key
-YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", None)
-
 # Default .alive name
 ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
 
 #telegraph
 TELEGRAPH_SHORT_NAME = os.environ.get("TELEGRAPH_SHORT_NAME", "TG-UBotX")
+
+#Message_Limit
+MAX_MESSAGE_SIZE_LIMIT = 4095
 
 # Time & Date - Country and Time Zone
 COUNTRY = str(os.environ.get("COUNTRY", ""))
