@@ -166,25 +166,8 @@ for binary, path in binaries.items():
     downloader = SmartDL(binary, path, progress_bar=False)
     downloader.start()
     os.chmod(path, 0o755)
-
-# 'bot' variable
-if STRING_SESSION:
-    # pylint: disable=invalid-name
-    bot = UserBot(StringSession(STRING_SESSION),
-                  API_KEY,
-                  API_HASH,
-                  connection_retries=None,
-                  auto_reconnect=False,
-                  lang_code='en')
-else:
-    # pylint: disable=invalid-name
-    bot = UserBot("userbot",
-                  session,
-                  API_KEY,
-                  API_HASH,
-                  connection_retries=None,
-                  auto_reconnect=False,
-                  lang_code='en')
+    
+    
     
 if REDIS_ENDPOINT and REDIS_PASSWORD:
     REDIS_HOST = REDIS_ENDPOINT.split(':')[0]
@@ -212,6 +195,25 @@ else:
         "redis endpoint and password, if you want to use a Redis session!"
     )
     quit(1)
+
+# 'bot' variable
+if STRING_SESSION:
+    # pylint: disable=invalid-name
+    bot = UserBot(StringSession(STRING_SESSION),
+                  API_KEY,
+                  API_HASH,
+                  connection_retries=None,
+                  auto_reconnect=False,
+                  lang_code='en')
+else:
+    # pylint: disable=invalid-name
+    bot = UserBot("userbot",
+                  session,
+                  API_KEY,
+                  API_HASH,
+                  connection_retries=None,
+                  auto_reconnect=False,
+                  lang_code='en')
 
 
 async def check_botlog_chatid():
