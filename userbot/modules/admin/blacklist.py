@@ -22,6 +22,7 @@ from typing import Dict, List
 from telethon.events import ChatAction
 from telethon.tl import types, functions
 
+from userbot import bot
 from userbot.events import register
 from userbot.utils.sessions import RedisSession
 from userbot.modules.sql_helper.redis_blacklist import Blacklist, GlobalBlacklist
