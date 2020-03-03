@@ -194,19 +194,19 @@ if REDIS_ENDPOINT and REDIS_PASSWORD:
     try:
         redis_connection.ping()
     except Exception as e:
-        LOGGER.exception(e)
+        LOGS.exception(e)
         print()
-        LOGGER.error(
+        LOGS.error(
             "Make sure you have the correct Redis endpoint and password "
             "and your machine can make connections."
         )
         quit(1)
         
     redis_session = True
-    LOGGER.INFO("Redis connection and Redis session")
+    LOGS.INFO("Redis connection and Redis session")
     session = RedisSession("userbot", redis_connection)
 else:
-    LOGGER.error(
+    LOGS.error(
         "Make a proper config with your API keys to at least run the scrip or "
         "make an account on redislabs.com and update your config with the "
         "redis endpoint and password, if you want to use a Redis session!"
