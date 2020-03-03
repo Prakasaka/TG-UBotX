@@ -179,6 +179,7 @@ if STRING_SESSION:
 else:
     # pylint: disable=invalid-name
     bot = UserBot("userbot",
+                  session=session,
                   API_KEY,
                   API_HASH,
                   connection_retries=None,
