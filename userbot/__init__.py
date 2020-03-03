@@ -7,6 +7,10 @@
 
 import os
 
+#redissssss
+import redis
+from .utils.sessions import RedisSession
+
 from sys import version_info
 from logging import basicConfig, getLogger, INFO, DEBUG
 from distutils.util import strtobool as sb
@@ -56,6 +60,11 @@ if CONFIG_CHECK:
 # Telegram App KEY and HASH
 API_KEY = os.environ.get("API_KEY", None)
 API_HASH = os.environ.get("API_HASH", None)
+
+#redissss
+REDIS_ENDPOINT = os.environ.get("REDIS_ENDPOINT", None)
+REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", None)
+
 
 # Userbot Session String
 STRING_SESSION = os.environ.get("STRING_SESSION", None)
@@ -167,7 +176,7 @@ if STRING_SESSION:
                   connection_retries=None,
                   auto_reconnect=False,
                   lang_code='en')
-else:
+elif:
     # pylint: disable=invalid-name
     bot = UserBot("userbot",
                   API_KEY,
@@ -175,6 +184,34 @@ else:
                   connection_retries=None,
                   auto_reconnect=False,
                   lang_code='en')
+    
+elif REDIS_ENDPOINT and REDIS_PASSWORD:
+    REDIS_HOST = REDIS_ENDPOINT.split(':')[0]
+    REDIS_PORT = REDIS_ENDPOINT.split(':')[1]
+    redis_connection = redis.Redis(
+        host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD
+    )
+    try:
+        redis_connection.ping()
+    except Exception as e:
+        LOGGER.exception(e)
+        print()
+        LOGGER.error(
+            "Make sure you have the correct Redis endpoint and password "
+            "and your machine can make connections."
+        )
+        quit(1)
+        
+    redis_session = True
+    LOGGER.INFO("Redis connection and Redis session")
+    session = RedisSession("userbot", redis_connection)
+else:
+    LOGGER.error(
+        "Make a proper config with your API keys to at least run the scrip or "
+        "make an account on redislabs.com and update your config with the "
+        "redis endpoint and password, if you want to use a Redis session!"
+    )
+    quit(1)
 
 
 async def check_botlog_chatid():
