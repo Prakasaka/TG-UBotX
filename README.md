@@ -36,7 +36,7 @@ Please, make sure you have followed the Wiki and all the steps required.
 
 ## Heroku Deploy
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TG-UBotX/TG-UBotX)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Prakasaka/TG-UBotX)
 
 ## Credits
 
