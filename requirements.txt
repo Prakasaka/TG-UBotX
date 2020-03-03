@@ -41,3 +41,7 @@ telegraph
 youtube-search
 mtranslate
 langdetect
+hiredis>=1.0.0
+redis>=3.3.10
+cryptg>=0.2.post0
+dill>=0.3.1.1
