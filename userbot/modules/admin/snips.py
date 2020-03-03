@@ -6,11 +6,18 @@
 """ Userbot module containing commands for keeping global notes. """
 
 from ..help import add_help_item
+from telethon import utils
+from telethon.tl import types
 from userbot.events import register
 from userbot import BOTLOG_CHATID
 
 
-@register(outgoing=True, pattern=r"\$\w*", disable_errors=True)
+TYPE_TEXT = 0
+TYPE_PHOTO = 1
+TYPE_DOCUMENT = 2
+
+
+@register(outgoing=True, pattern=r"\₹\w*", disable_errors=True)
 async def on_snip(event):
     """ Snips logic. """
     try:
@@ -19,21 +26,27 @@ async def on_snip(event):
         return
     name = event.text[1:]
     snip = get_snip(name)
-    message_id_to_reply = event.message.reply_to_msg_id
-    if not message_id_to_reply:
-        message_id_to_reply = None
-    if snip and snip.f_mesg_id:
-        msg_o = await event.client.get_messages(entity=BOTLOG_CHATID,
-                                                ids=int(snip.f_mesg_id))
-        await event.client.send_message(event.chat_id,
-                                        msg_o.message,
-                                        reply_to=message_id_to_reply,
-                                        file=msg_o.media)
-        await event.delete()
-    elif snip and snip.reply:
+    if snip:
+        if snip.snip_type == TYPE_PHOTO:
+            media = types.InputPhoto(int(snip.media_id),
+                                     int(snip.media_access_hash),
+                                     snip.media_file_reference)
+        elif snip.snip_type == TYPE_DOCUMENT:
+            media = types.InputDocument(int(snip.media_id),
+                                        int(snip.media_access_hash),
+                                        snip.media_file_reference)
+        else:
+            media = None
+
+        message_id_to_reply = event.message.reply_to_msg_id
+
+        if not message_id_to_reply:
+            message_id_to_reply = None
+
         await event.client.send_message(event.chat_id,
                                         snip.reply,
-                                        reply_to=message_id_to_reply)
+                                        reply_to=message_id_to_reply,
+                                        file=media)
         await event.delete()
 
 
@@ -45,36 +58,33 @@ async def on_snip_save(event):
     except AtrributeError:
         await event.edit("`Running on Non-SQL mode!`")
         return
-    keyword = event.pattern_match.group(1)
-    string = event.text.partition(keyword)[2]
+    name = event.pattern_match.group(1)
     msg = await event.get_reply_message()
-    msg_id = None
-    if msg and msg.media and not string:
-        if BOTLOG_CHATID:
-            await event.client.send_message(
-                BOTLOG_CHATID, f"#SNIP\
-            \nKEYWORD: {keyword}\
-            \n\nThe following message is saved as the data for the snip, please do NOT delete it !!"
-            )
-            msg_o = await event.client.forward_messages(
-                entity=BOTLOG_CHATID,
-                messages=msg,
-                from_peer=event.chat_id,
-                silent=True)
-            msg_id = msg_o.id
-        else:
-            await event.edit(
-                "`Saving snips with media requires the BOTLOG_CHATID to be set.`"
-            )
-            return
-    elif event.reply_to_msg_id and not string:
-        rep_msg = await event.get_reply_message()
-        string = rep_msg.text
-    success = "`Snip {} successfully. Use` **${}** `anywhere to get it`"
-    if add_snip(keyword, string, msg_id) is False:
-        await event.edit(success.format('updated', keyword))
+    if not msg:
+        await event.edit("`I need something to save as a snip.`")
+        return
     else:
-        await event.edit(success.format('saved', keyword))
+        snip = {'type': TYPE_TEXT, 'text': msg.message or ''}
+        if msg.media:
+            media = None
+            if isinstance(msg.media, types.MessageMediaPhoto):
+                media = utils.get_input_photo(msg.media.photo)
+                snip['type'] = TYPE_PHOTO
+            elif isinstance(msg.media, types.MessageMediaDocument):
+                media = utils.get_input_document(msg.media.document)
+                snip['type'] = TYPE_DOCUMENT
+            if media:
+                snip['id'] = media.id
+                snip['hash'] = media.access_hash
+                snip['fr'] = media.file_reference
+
+        success = "**Snip {} successfully. Use** `₹{}` **anywhere to get it**"
+
+        if add_snip(name, snip['text'], snip['type'], snip.get('id'),
+                    snip.get('hash'), snip.get('fr')) is False:
+            await event.edit(success.format('updated', name))
+        else:
+            await event.edit(success.format('saved', name))
 
 
 @register(outgoing=True, pattern=r"^\.snips$")
@@ -91,9 +101,9 @@ async def on_snip_list(event):
     for a_snip in all_snips:
         if message == "`No snips available right now.`":
             message = "**Available snips:**\n"
-            message += f" • `${a_snip.snip}`\n"
+            message += f" • `₹{a_snip.snip}`\n"
         else:
-            message += f" • `${a_snip.snip}`\n"
+            message += f" • `₹{a_snip.snip}`\n"
 
     await event.edit(message)
 
@@ -118,7 +128,7 @@ add_help_item(
     "Admin",
     "Similar to notes but global and only you can use",
     """
-    `.$<snip_name>`
+    `.₹<snip_name>`
     Usage: Gets the specified snip, anywhere.
 
     `.snip` <name> <data> or reply to a message with .snip <name>

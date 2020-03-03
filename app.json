@@ -47,16 +47,6 @@
       "value": "1",
       "required": false
     },
-    "CHROME_DRIVER": {
-      "description": "ChromeDriver location for selenium based modules.",
-      "value": "/usr/bin/chromedriver",
-      "required": false
-    },
-    "GOOGLE_CHROME_BIN": {
-      "description": "Google Chrome (or) Chromium binary location for selenium based modules.",
-      "value": "/usr/bin/chromium-browser",
-      "required": false
-    },
     "OPEN_WEATHER_MAP_APPID": {
       "description": "Get your own APPID (API key)from https://api.openweathermap.org/data/2.5/weather",
       "required": false
@@ -76,10 +66,6 @@
     "PM_AUTO_BAN": {
       "description": "PM Auto-Ban Feature Switch. Also known as the 'bleep blop, this is a bot...' module.",
       "value": "False"
-    },
-    "YOUTUBE_API_KEY": {
-      "description": "YouTube Data API Key for .yt command. Get from https://console.cloud.google.com",
-      "required": false
     },
     "REM_BG_API_KEY": {
       "description": "API Key for .rbg command. Get from https://www.remove.bg/api",

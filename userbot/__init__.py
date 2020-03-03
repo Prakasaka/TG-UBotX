@@ -115,11 +115,14 @@ WEATHER_DEFCITY = os.environ.get("WEATHER_DEFCITY", None)
 FACE_API_KEY = os.environ.get("FACE_API_KEY", None)
 FACE_API_URL = os.environ.get("FACE_API_URL", None)
 
-# Youtube API key
-YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY", None)
-
 # Default .alive name
 ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
+
+#telegraph
+TELEGRAPH_SHORT_NAME = os.environ.get("TELEGRAPH_SHORT_NAME", "TG-UBotX")
+
+#Message_Limit
+MAX_MESSAGE_SIZE_LIMIT = 4095
 
 # Time & Date - Country and Time Zone
 COUNTRY = str(os.environ.get("COUNTRY", ""))
@@ -142,10 +145,12 @@ if not os.path.exists('bin'):
     os.mkdir('bin')
 
 binaries = {
-    "https://raw.githubusercontent.com/TG-UBotX/megadown/master/megadown":
+    "https://raw.githubusercontent.com/yshalsager/megadown/master/megadown":
     "bin/megadown",
-    "https://raw.githubusercontent.com/TG-UBotX/cmrudl.py/master/cmrudl.py":
+    "https://raw.githubusercontent.com/yshalsager/cmrudl.py/master/cmrudl.py":
     "bin/cmrudl",
+    "https://raw.githubusercontent.com/adekmaulana/python-scripts/master/shell/megadirect":
+    "bin/megadirect"
 }
 
 for binary, path in binaries.items():

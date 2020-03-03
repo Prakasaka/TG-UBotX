@@ -22,26 +22,6 @@ DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else uname().node
 # ============================================
 
 
-@register(outgoing=True, pattern=r"^\.sysd$")
-async def sysdetails(sysd):
-    """ For .sysd command, get system info using neofetch. """
-    try:
-        neo = "neofetch --stdout"
-        fetch = await asyncrunapp(
-            neo,
-            stdout=asyncPIPE,
-            stderr=asyncPIPE,
-        )
-
-        stdout, stderr = await fetch.communicate()
-        result = str(stdout.decode().strip()) \
-            + str(stderr.decode().strip())
-
-        await sysd.edit("`" + result + "`")
-    except FileNotFoundError:
-        await sysd.edit("`Install neofetch first !!`")
-
-
 @register(outgoing=True, pattern=r"^\.botver$")
 async def bot_ver(event):
     """ For .botver command, get the bot version. """
@@ -125,15 +105,14 @@ async def pipcheck(pip):
 @register(outgoing=True, pattern=r"^\.alive$")
 async def amireallyalive(alive):
     """ For .alive command, check if the bot is running.  """
-    await alive.edit(
-        "**UBotX is alive!**\n\n"
-        f"**Telethon version:** `{version.__version__}` \n"
-        f"**Python version:** `{python_version()}` \n"
-        f"**UBotX version:** `{VERSION}` \n"
-        f"**Source:** [HERE](https://github.com/TG-UBotX/TG-UBotX) \n\n"
-        f"**Modules loaded:** `{len(ALL_MODULES)}` \n"
-        f"**User:** `{DEFAULTUSER}`"
-    )
+    hooman = (
+              "**I am Working Hooman**\n\n"
+              f"**Telethon version:** `{version.__version__}` \n"
+              f"**Python version:** `{python_version()}` \n"
+              f"**UBotX version:** `{VERSION}` \n"
+              f"**User:** `{DEFAULTUSER}` \n"
+              f"[I DEMAND RIGHTS FOR US BOTS, WE ARE EQUAL TO YOU HOOMANS](https://telegra.ph/file/a40c982e973fe07ed528a.mp4)")
+    await alive.edit(hooman,link_preview=True)
 
 
 @register(outgoing=True, pattern=r"^\.aliveu")
