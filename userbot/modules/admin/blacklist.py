@@ -24,7 +24,7 @@ from telethon.tl import types, functions
 
 from userbot.events import register
 from userbot.utils.sessions import RedisSession
-from userbot.modules.sql_helper.redis_blacklist.py import Blacklist, GlobalBlacklist
+from userbot.modules.sql_helper.redis_blacklist import Blacklist, GlobalBlacklist
 
 
 
