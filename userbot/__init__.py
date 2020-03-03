@@ -203,7 +203,6 @@ if REDIS_ENDPOINT and REDIS_PASSWORD:
         quit(1)
         
     redis_session = True
-    LOGS.INFO("Redis connection and Redis session")
     session = RedisSession("userbot", redis_connection)
 else:
     LOGS.error(
