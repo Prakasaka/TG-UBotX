@@ -176,7 +176,7 @@ if STRING_SESSION:
                   connection_retries=None,
                   auto_reconnect=False,
                   lang_code='en')
-elif:
+else:
     # pylint: disable=invalid-name
     bot = UserBot("userbot",
                   API_KEY,
@@ -185,7 +185,7 @@ elif:
                   auto_reconnect=False,
                   lang_code='en')
     
-elif REDIS_ENDPOINT and REDIS_PASSWORD:
+if REDIS_ENDPOINT and REDIS_PASSWORD:
     REDIS_HOST = REDIS_ENDPOINT.split(':')[0]
     REDIS_PORT = REDIS_ENDPOINT.split(':')[1]
     redis_connection = redis.Redis(
