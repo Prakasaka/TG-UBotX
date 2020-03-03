@@ -28,7 +28,10 @@ from userbot.utils.sessions import RedisSession
 from userbot.modules.sql_helper.redis_blacklist import Blacklist, GlobalBlacklist
 
 
-redis = RedisSession
+if RedisSession:
+    redis = redis_connection
+else:
+    redis = None
 
 bl_pattern = (
     r"(?P<global>g(?:lobal)?)?"
