@@ -29,8 +29,8 @@ from userbot.modules.sql_helper.redis_blacklist import Blacklist, GlobalBlacklis
 
 
 
-if isinstance(type(client.session), type(RedisSession)):
-    redis = client.session.redis_connection
+if isinstance(type(bot.session), type(RedisSession)):
+    redis = bot.session.redis_connection
 else:
     redis = None
 
