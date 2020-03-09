@@ -1054,11 +1054,9 @@ async def bluetext(bt_e):
 @register(outgoing=True, pattern=r"^\.f (.*)")
 async def payf(event):
     paytext = event.pattern_match.group(1)
-    pay = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(
-        paytext * 8, paytext * 8, paytext * 2, paytext * 2, paytext * 2,
-        paytext * 6, paytext * 6, paytext * 2, paytext * 2, paytext * 2,
-        paytext * 2, paytext * 2)
-    await event.edit(pay)
+    big_f = [8,8,2,2,2,6,6,2,2,2,2,2]
+    for pay in big_f:
+        await event.edit(f"{pay * big_f}")
 
 
 @register(outgoing=True, pattern=r"^\.lfy (.*)")
