@@ -1056,7 +1056,7 @@ async def payf(event):
     paytext = event.pattern_match.group(1)
     big_f = [8,8,2,2,2,6,6,2,2,2,2,2]
     for pay in big_f:
-        await event.edit(f"{pay * big_f}")
+        await event.edit(f"{pay * paytext}")
 
 
 @register(outgoing=True, pattern=r"^\.lfy (.*)")
