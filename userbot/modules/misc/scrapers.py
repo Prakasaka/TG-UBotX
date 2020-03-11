@@ -284,7 +284,7 @@ async def trans_late(gootrans):
         await gootrans.edit("`Babe..Are you okay? You can not translate files you know.`")
         return
     await gootrans.edit("`Translating...`")
-    result = translate(text, message, 'auto')
+    result = translate(text, message, 'hi')
     await gootrans.edit(
                        "**Text:** `{}`\n"
                        "**Detected Language:** `{}`\n\n"
