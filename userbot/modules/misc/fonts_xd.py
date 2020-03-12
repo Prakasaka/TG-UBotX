@@ -4,7 +4,6 @@
 
 import io
 import textwrap
-import random
 from telethon import events
 
 from PIL import Image, ImageDraw, ImageFont
