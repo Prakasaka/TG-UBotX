@@ -8,10 +8,17 @@ import random
 from telethon import events
 
 from PIL import Image, ImageDraw, ImageFont
-from userbot.fonts import * as xd
 from random import choice
 
 from userbot.events import register
+
+xd = [
+    "/app/userbot/fonts/Aisyah-Demo.otf",
+    "/app/userbot/fonts/BeachmanScript.ttf",
+    "/app/userbot/fonts/Bella Donna Personal Use.ttf",
+    "/app/userbot/fonts/Honeymoon Avenue Script Demo.ttf"
+]
+    
 
 @register(outgoing=True, pattern="^\.font (.*)")
 async def sticklet(event):
