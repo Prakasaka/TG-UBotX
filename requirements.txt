@@ -14,7 +14,6 @@ hachoir
 heroku3
 httplib2==0.15.0
 humanize
-textwrap
 lxml
 oauth2client
 progress
