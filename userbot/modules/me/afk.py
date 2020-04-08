@@ -5,7 +5,7 @@
 #
 """ Userbot module which contains afk-related commands """
 
-from random
+import random
 from asyncio import sleep
 
 from telethon.events import StopPropagation
