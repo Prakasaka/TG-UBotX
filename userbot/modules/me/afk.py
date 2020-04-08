@@ -6,7 +6,6 @@
 """ Userbot module which contains afk-related commands """
 
 from random import choice, randint
-import time
 
 from telethon.events import StopPropagation
 
@@ -178,9 +177,7 @@ async def type_afk_is_not_true(notafk):
     if ISAFK or ISAFK_SQL:
         if afk_db:
             delgvar("AFK_STATUS")
-            k = await notafk.edit("I'm no longer AFK.")
-            time.sleep(2.5)
-            await k.delete()
+            await notafk.edit("I'm no longer AFK.")
             delgvar("AFK_REASON")
         ISAFK = False
         AFKREASON = None
