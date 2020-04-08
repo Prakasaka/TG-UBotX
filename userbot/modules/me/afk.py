@@ -178,9 +178,16 @@ async def type_afk_is_not_true(notafk):
     if ISAFK or ISAFK_SQL:
         if afk_db:
             delgvar("AFK_STATUS")
+            await notafk.respond("I'm no longer AFK.")
             delgvar("AFK_REASON")
         ISAFK = False
         AFKREASON = None
+        afk_info = await notafk.respond(
+            "`You recieved " +
+            str(COUNT_MSG) +
+            " messages while you were away. Check log for more details.`"
+        )
+        await afk_info.delete()
         if BOTLOG:
             await notafk.client.send_message(
                 BOTLOG_CHATID,
