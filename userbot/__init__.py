@@ -217,6 +217,4 @@ USERS = {}
 COUNT_PM = {}
 LASTMSG = {}
 CMD_HELP = {}
-ISAFK = False
-AFKREASON = None
 VERSION = "6.4.7"
