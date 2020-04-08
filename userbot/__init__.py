@@ -218,3 +218,5 @@ COUNT_PM = {}
 LASTMSG = {}
 CMD_HELP = {}
 VERSION = "6.4.7"
+ISAFK = False
+AFKREASON = None
