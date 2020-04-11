@@ -1,15 +1,9 @@
 # We're using Alpine Edge
-FROM alpine:edge
+FROM python:3.7-alpine
 
-# We have to uncomment Community repo for some packages
-RUN sed -e 's;^#http\(.*\)/edge/community;http\1/edge/community;g' -i /etc/apk/repositories
-
-# install ca-certificates so that HTTPS works consistently
-# other runtime dependencies for Python are installed later
-RUN apk add --no-cache ca-certificates
 
 # Installing Packages
-RUN apk add update \
+RUN apk add --no-cache --update \
     bash \
     build-base \
     bzip2-dev \
