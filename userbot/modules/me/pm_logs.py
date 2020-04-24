@@ -15,16 +15,13 @@ from userbot.events import register
 from userbot import BOTLOG, BOTLOG_CHATID, LOGS
 
 
-GROUP = -1001150051137
-
-
 @register(incoming=True, disable_edited=True)
 async def monito_p_m_s(event):
     sender = await event.client.get_entity(int(GROUP))
     e = await event.client.get_entity(int(BOTLOG_CHATID))
     fwd_message = await event.client.forward_messages(
-    e,
-    event.message,
     sender,
+    event.message,
+    e,
     silent=True
     )
