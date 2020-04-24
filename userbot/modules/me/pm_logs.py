@@ -16,7 +16,7 @@ from userbot import BOTLOG, BOTLOG_CHATID, LOGS
 
 
 NO_PM_LOG_USERS = []
-GROUP = [-1001150051137]
+GROUP = -1001150051137
 
 
 @register(incoming=True, disable_edited=True)
