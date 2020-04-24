@@ -12,7 +12,7 @@ import asyncio
 from telethon import events
 from telethon.tl import functions, types
 from userbot.events import register
-from userbot import BOTLOG, BOTLOG_CHATID, LOGS
+from userbot import BOTLOG, BOTLOG_CHATID
 
 
 @register(incoming=True, disable_edited=True)
