@@ -22,8 +22,8 @@ NO_PM_LOG_USERS = []
 @register(incoming=True, disable_edited=True)
 async def monito_p_m_s(event):
     sender = await event.get_sender()
-    if sender == GROUP_ID and not (await event.get_sender()).bot:
-        chat = await event.get_chat()
+    if await event.get_sender().bot:
+        chat = await event.get_chat(int(GROUP_ID))
         if chat.id not in NO_PM_LOG_USERS and chat.id:
             try:
                 e = await event.client.get_entity(int(BOTLOG_CHATID))
