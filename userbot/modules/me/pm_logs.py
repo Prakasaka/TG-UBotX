@@ -12,17 +12,17 @@ import asyncio
 from telethon import events
 from telethon.tl import functions, types
 from userbot.events import register
-from userbot import BOTLOG, BOTLOG_CHATID, LOGS
+from userbot import BOTLOG, BOTLOG_CHATID, LOGS, GROUP_ID
 
 
 NO_PM_LOG_USERS = []
-GROUP = -1001150051137
+# GROUP = -1001150051137
 
 
 @register(incoming=True, disable_edited=True)
 async def monito_p_m_s(event):
     sender = await event.get_sender()
-    if sender in GROUP and not (await event.get_sender()).bot:
+    if sender == GROUP_ID and not (await event.get_sender()).bot:
         chat = await event.get_chat()
         if chat.id not in NO_PM_LOG_USERS and chat.id:
             try:
