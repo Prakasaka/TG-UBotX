@@ -8,7 +8,7 @@
 """ Userbot module for Forwarding PM to BotLog Group. """
 
 
-import asyncio
+"""import asyncio
 from telethon import events
 from telethon.tl import functions, types
 from userbot.events import register
@@ -23,3 +23,4 @@ async def monito_p_m_s(event):
     event.message,
     silent=True
     )
+"""
