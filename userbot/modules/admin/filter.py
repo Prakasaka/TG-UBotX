@@ -48,7 +48,7 @@ async def add_new_filter(new_handler):
         await new_handler.edit("`Running on Non-SQL mode!`")
         return
     keyword = new_handler.pattern_match.group(1)
-    string = new_handler.partition(keyword)[2]
+    string = new_handler.text.partition(keyword)[2]
     msg = await new_handler.get_reply_message()
     msg_id = None
     if msg and msg.media and not string:
