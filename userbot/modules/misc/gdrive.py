@@ -10,6 +10,7 @@ import os
 import time
 import httplib2
 import subprocess
+import magic
 
 from pySmartDL import SmartDL
 from telethon import events
@@ -25,7 +26,6 @@ from userbot import (G_DRIVE_CLIENT_ID, G_DRIVE_CLIENT_SECRET,
                      G_DRIVE_AUTH_TOKEN_DATA, GDRIVE_FOLDER_ID, BOTLOG_CHATID,
                      TEMP_DOWNLOAD_DIRECTORY, LOGS)
 from userbot.events import register
-from mimetypes import guess_type
 from userbot.modules.misc.upload_download import progress, humanbytes, time_formatter
 
 # Path to token json file, it should be in same directory as script
@@ -217,7 +217,8 @@ async def show_current_gdrove_folder(event):
 
 # Get mime type and name of given file
 def file_ops(file_path):
-    mime_type = guess_type(file_path)[0]
+    mime = magic.Magic(mime=True)
+    mime_type = mime.from_file(file_path)
     mime_type = mime_type if mime_type else "text/plain"
     file_name = file_path.split("/")[-1]
     return file_name, mime_type

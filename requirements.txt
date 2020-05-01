@@ -41,3 +41,4 @@ telegraph
 youtube-search
 mtranslate
 langdetect
+python-magic
