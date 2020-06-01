@@ -44,6 +44,11 @@ RUN apk add --no-cache --update \
     zlib-dev \
     zip
     
+    RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+    RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+    RUN apk update
+    RUN apk add megatools
+
 
 #
 # Clone repo and prepare working directory
